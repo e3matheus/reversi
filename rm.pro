@@ -159,11 +159,11 @@ modReversi(B, M, F, C, B2) :- set_board(B, M, F, C, B1, 1),
                               inverse_mark(M, I), 
                               modi(B1, M, I, F, C, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B2).
 
-modiAll(B, [NF], [NC], M, I, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B2):-  
-    modi(B, M, I, NF, NC, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B1).
-modiAll(B, [NF|TF], [NC|TC], M, I, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B2):-  
+modiAll(B, NF, NC, M, I, B2):-  
+    modi(B, M, I, NF, NC, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B2).
+modiAll(B, [NF|TF], [NC|TC], M, I, B2):- 
     modi(B, M, I, NF, NC, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B1),
-    modiAll(B1, TF, TC, M, I, [ul, uc, ur, cl, cr, dl, dc, dr], 1, B2).
+    modiAll(B1, TF, TC, M, I, B2).
 
 modi(B, M, I, F, C, [D], 8, B2):-  modifyDir(B, D, M, I, F, C, B2).
 modi(B, M, I, F, C, [D|R], Cont, B3):- modifyDir(B, D, M, I, F, C, B2),
@@ -175,7 +175,8 @@ modifyDir(B, D, M, I, F, C, B2) :- getPos(D, F, C, NF, NC),
                                    searchDBI(B, D, I, NF, NC, TF, TC, NF1, NC1), 
                                    getPos(D, NF1, NC1, NF2, NC2),
                                    searchB(B, M, NF2, NC2),
-                                   set_list_values(B, M, [NF|TF], [NC|TC], B2).
+                                   set_list_values(B, M, TF, TC, B1), write(TF), write(TC),
+                                   modiAll(B1, TF, TC, M, I, B2). 
 modifyDir(B, _, _, _, _, _, B).
 
 set_list_values(B, M, [F|RF], [C|RC], B3) :- set_board(B, M, F, C, B2, 1), set_list_values(B2, M, RF, RC, B3).
